@@ -22,21 +22,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author admin
  */
-@Service("userDetailsService")
+@Service("userDetailService")
+@Transactional
 public class UserServiceImpl implements UserService {
+
     @Autowired
     private UserRepository userRepo;
+    
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passEncoder;
+    
     @Autowired
     private Cloudinary cloudinary;
-
 
     @Override
     public User getUserByUsername(String username) {
@@ -45,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User u = this.getUserByUsername(username);
+        User u = this.userRepo.getUserByUsername(username);
         if (u == null) {
             throw new UsernameNotFoundException("Invalid username!");
         }
@@ -62,14 +66,16 @@ public class UserServiceImpl implements UserService {
         User u = new User();
         u.setFirstName(params.get("firstName"));
         u.setLastName(params.get("lastName"));
-        u.setUsername(params.get("username"));
-        u.setPassword(this.passwordEncoder.encode(params.get("password")));
         u.setPhone(params.get("phone"));
         u.setEmail(params.get("email"));
         u.setUserRole("ROLE_USER");
+        u.setUsername(params.get("username"));
+        u.setPassword(this.passEncoder.encode(params.get("password")));
+        
         if (!avatar.isEmpty()) {
             try {
-                Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                Map res = cloudinary.uploader().upload(avatar.getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
                 u.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
                 Logger.getLogger(ProductServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -79,4 +85,8 @@ public class UserServiceImpl implements UserService {
         return this.userRepo.addUser(u);
     }
 
+    @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepo.authenticate(username, password);
+    }
 }

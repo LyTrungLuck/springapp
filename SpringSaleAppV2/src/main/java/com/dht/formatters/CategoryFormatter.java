@@ -13,11 +13,11 @@ import org.springframework.format.Formatter;
  *
  * @author admin
  */
-public class CategoryFormatter implements Formatter<Category>{
+public class CategoryFormatter implements Formatter<Category> {
 
     @Override
-    public String print(Category cate, Locale locale) {
-        return String.valueOf(cate.getId());
+    public String print(Category c, Locale locale) {
+        return String.valueOf(c.getId());
     }
 
     @Override

@@ -22,21 +22,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class ProductController {
     @Autowired
     private ProductService prodService;
+    
     @GetMapping("/products")
-    public String productView(Model model) {
+    public String createView(Model model) {
         model.addAttribute("product", new Product());
         return "products";
     }
     
     @PostMapping("/add")
-    public String create(@ModelAttribute(value = "product") Product p) {
-        this.prodService.addOrUpdate(p);
+    public String add(@ModelAttribute(value = "product") Product p) {
+        this.prodService.createOrUpdate(p);
         
         return "redirect:/";
-    }
+    } 
     
     @GetMapping("/products/{productId}")
-    public String productView(Model model, @PathVariable(value = "productId") int id) {
+    public String updateView(Model model, @PathVariable(value = "productId") int id) {
         model.addAttribute("product", this.prodService.getProductById(id));
         return "products";
     }

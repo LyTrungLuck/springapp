@@ -1,10 +1,11 @@
-package com.dht.repositories.impl;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+package com.dht.repositories.impl;
 
+
+import com.dht.pojo.Comment;
 import com.dht.pojo.Product;
 import com.dht.repositories.ProductRepository;
 import jakarta.persistence.Query;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductRepositoryImpl implements ProductRepository {
 
     private static final int PAGE_SIZE = 6;
+
     @Autowired
     private LocalSessionFactoryBean factory;
 
@@ -66,17 +68,12 @@ public class ProductRepositoryImpl implements ProductRepository {
             }
 
             q.where(predicates.toArray(Predicate[]::new));
-
-            String sort = params.get("sort");
-            if (sort != null && !sort.isEmpty()) {
-                q.orderBy(b.asc(root.get(sort)));
-            }
         }
 
         Query query = s.createQuery(q);
 
         if (params != null && params.containsKey("page")) {
-            int page = Integer.parseInt(params.get("page"));
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
             int start = (page - 1) * PAGE_SIZE;
             query.setMaxResults(PAGE_SIZE);
             query.setFirstResult(start);
@@ -86,20 +83,15 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     }
 
+    @Override
     public Product getProductById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(Product.class, id);
 
     }
 
-    public void deleteProduct(int id) {
-        Session s = this.factory.getObject().getCurrentSession();
-        Product p = this.getProductById(id);
-        s.remove(p);
-
-    }
-
-    public Product addOrUpdate(Product p) {
+    @Override
+    public Product createOrUpdate(Product p) {
         Session s = this.factory.getObject().getCurrentSession();
         if (p.getId() == null) {
             s.persist(p);
@@ -110,6 +102,27 @@ public class ProductRepositoryImpl implements ProductRepository {
         s.refresh(p);
 
         return p;
+    }
 
+    @Override
+    public void deleteProduct(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Product p = this.getProductById(id);
+        s.remove(p);
+
+    }
+    
+    @Override
+    public List<Comment> getComments(int productId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Comment> q = b.createQuery(Comment.class);
+        Root root = q.from(Comment.class);
+        q.select(root);
+        
+        q.where(b.equal(root.get("productId").as(Integer.class), productId));
+        
+        Query query = s.createQuery(q);
+        return query.getResultList();
     }
 }

@@ -4,13 +4,13 @@
  */
 package com.dht.repositories.impl;
 
-
 import com.dht.pojo.Category;
 import com.dht.repositories.CategoryRepository;
 import jakarta.persistence.Query;
 import java.util.List;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +26,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
-    @Override
     public List<Category> getCates() {
         Session s = this.factory.getObject().getCurrentSession();
-        Query q = s.createQuery("FROM Category", Category.class);
-        return q.getResultList();
+        Query query = s.createQuery("FROM Category", Category.class);
+        return query.getResultList();
     }
 }

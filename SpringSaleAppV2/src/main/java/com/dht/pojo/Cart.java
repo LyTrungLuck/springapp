@@ -11,8 +11,8 @@ package com.dht.pojo;
 public class Cart {
     private int id;
     private String name;
-    private Long price;
     private int quantity;
+    private Long price;
 
     /**
      * @return the id
@@ -43,20 +43,6 @@ public class Cart {
     }
 
     /**
-     * @return the price
-     */
-    public Long getPrice() {
-        return price;
-    }
-
-    /**
-     * @param price the price to set
-     */
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-
-    /**
      * @return the quantity
      */
     public int getQuantity() {
@@ -68,5 +54,19 @@ public class Cart {
      */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * @return the price
+     */
+    public Long getPrice() {
+        return price;
+    }
+
+    /**
+     * @param price the price to set
+     */
+    public void setPrice(Long price) {
+        this.price = price;
     }
 }

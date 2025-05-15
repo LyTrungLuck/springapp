@@ -23,8 +23,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  * @author admin
  */
 @Configuration
-@EnableTransactionManagement
 @EnableWebSecurity
+@EnableTransactionManagement
 @ComponentScan(basePackages = {
     "com.dht.controllers",
     "com.dht.repositories",
@@ -41,11 +41,10 @@ public class SpringSecurityConfigs {
     }
 
     @Bean
-    public HandlerMappingIntrospector
-            mvcHandlerMappingIntrospector() {
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();
     }
-            
+    
     @Bean
     public Cloudinary cloudinary() {
         Cloudinary cloudinary
@@ -54,19 +53,22 @@ public class SpringSecurityConfigs {
                         "api_key", "448651448423589",
                         "api_secret", "ftGud0r1TTqp0CGp5tjwNmkAm-A",
                         "secure", true));
+        
         return cloudinary;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-            Exception {
-        http.csrf(c -> c.disable()).authorizeHttpRequests(requests
-                -> requests.requestMatchers("/").authenticated().requestMatchers("/api/**").permitAll())
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(c -> c.disable()).authorizeHttpRequests(requests 
+                -> requests.requestMatchers("/", "/home").authenticated()
+                        .requestMatchers("/js/**").permitAll()
+                        .requestMatchers("/api/**").permitAll())
                 .formLogin(form -> form.loginPage("/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true").permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+        
         return http.build();
     }
 }

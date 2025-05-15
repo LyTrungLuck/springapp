@@ -29,12 +29,12 @@ public class IndexController {
     
     @ModelAttribute
     public void commonResponses(Model model) {
-        model.addAttribute("categories", this.cateService.getCates());
+         model.addAttribute("categories", this.cateService.getCates());
     }
     
     @RequestMapping("/")
     public String index(Model model, @RequestParam Map<String, String> params) {
-        
+       
         model.addAttribute("products", this.prodService.getProducts(params));
         return "index";
     }

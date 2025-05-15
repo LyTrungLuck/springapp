@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiReceiptController {
     @Autowired
     private ReceiptService receiptService;
-    @PostMapping("/receipts")
     
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/receipts")
+    @ResponseStatus(HttpStatus.CREATED)
     public void addReceipt(@RequestBody List<Cart> carts) {
         this.receiptService.addReceipt(carts);
     }

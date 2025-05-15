@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * @author admin
  */
 @Service
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryServiceImpl implements CategoryService{
     @Autowired
     private CategoryRepository cateRepo;
 
